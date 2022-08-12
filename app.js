@@ -1,8 +1,8 @@
+require('dotenv').config();
+
 const mailchimp = require('@mailchimp/mailchimp_marketing');
 const express = require('express');
 const bodyParser = require('body-parser');
-const request = require('request');
-const https = require('https');
 
 const app = express();
 
@@ -11,17 +11,17 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(express.static("public"));
 
-app.get("/", function(req, res) {
+app.get("/", function (_req, res) {
   res.sendFile(__dirname + "/signup.html");
 })
 
 mailchimp.setConfig({
-  apiKey: "ac434dc06b55dc93e1b337e2195306d1-us8",
+  apiKey: process.env.MAILCHIMP_API_TOKEN,
   server: "us8",
 });
 
 app.post("/", function(req, res) {
-  const listId = "2a6f54e15d";
+  const listId = process.env.MAILCHIMP_LIST_ID;
 
   const name = req.body.userName;
   const surname = req.body.userSurname;
@@ -57,16 +57,12 @@ app.post("/", function(req, res) {
   run();
 });
 
-app.post("/failure", function(req, res) {
+app.post("/failure", function(_req, res) {
   res.redirect("/");
 })
 
-app.listen(process.env.PORT || 3000, function() {
-  console.log("Server running on port 3000...");
-})
+app.listen(process.env.PORT || 3000, () => {
+    console.log("Server running on port 3000...");
+  })
 
-// API KEYS
-// ac434dc06b55dc93e1b337e2195306d1-us8
 
-// LIST ID
-// 2a6f54e15d
